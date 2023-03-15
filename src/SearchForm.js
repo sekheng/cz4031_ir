@@ -31,6 +31,7 @@ export default class SearchForm extends React.Component {
                 return;
             }
             console.log(result.response);
+            // then get the data from it!
         });
     };
 
