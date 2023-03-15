@@ -4,8 +4,9 @@ import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Main from "./Main";
+import SolrNode from "solr-node";
 
-class SearchForm extends React.Component {
+export default class SearchForm extends React.Component {
     state = {
         message: "",
         country: "",
@@ -13,10 +14,24 @@ class SearchForm extends React.Component {
         sendCountry: "",
     };
 
+    client = new SolrNode({
+        host: "localhost",
+        port: "8983",
+        core: "testTweet",
+        protocol: "http",
+    });
+
     handleSubmit = () => {
         // this will send the query to get data from SOLR
         this.setState({ sendMessage: this.state.message });
         this.setState({ sendCountry: this.state.country });
+        this.client.search("q=*:*", function (err, result) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            console.log(result.response);
+        });
     };
 
     render() {
@@ -70,5 +85,3 @@ class SearchForm extends React.Component {
         );
     }
 }
-
-export default SearchForm;
