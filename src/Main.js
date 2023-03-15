@@ -21,7 +21,7 @@ export default function Main() {
         <div>
             <h1>{message}</h1>
             <h2>{country}</h2>
-            <Recharts.ResponsiveContainer width={150} height={400}>
+            <Recharts.ResponsiveContainer minWidth={150} minHeight={400}>
                 <Recharts.BarChart
                     data={data}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
