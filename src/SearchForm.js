@@ -25,7 +25,14 @@ export default class SearchForm extends React.Component {
         // this will send the query to get data from SOLR
         this.setState({ sendMessage: this.state.message });
         this.setState({ sendCountry: this.state.country });
-        this.client.search("q=*:*", function (err, result) {
+        let supposedStr = this.client
+            .query()
+            .q({
+                clean_text: this.state.message,
+                location: this.state.country,
+            })
+            .rows(10000);
+        this.client.search(supposedStr, function (err, result) {
             if (err) {
                 console.log(err);
                 return;
@@ -34,8 +41,42 @@ export default class SearchForm extends React.Component {
             // then get the data from it!
         });
     };
+    listOfLocs = ["none"];
+    constructor(props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        // get the list of places
+        const columnStr =
+            "q=*:*&q.op=OR&indent=true&facet=true&facet.field=location&facet.limit=-1&facet.mincount=1";
+        this.client.search(
+            columnStr,
+            function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    // extract the list from result
+                    const column =
+                        result["facet_counts"]["facet_fields"]["location"];
+                    if (column !== undefined) {
+                        let colList = column.filter(
+                            (val) => typeof val === "string"
+                        );
+                        // you need this line otherwise compiler complains
+                        this.listOfLocs = colList;
+                        this.setState({ colList: this.listOfLocs });
+                    }
+                }
+            }.bind(this)
+        );
+    }
 
     render() {
+        // to spawn the options
+        let locOptions = this.listOfLocs.map((option, index) => (
+            <option key={index}>{option}</option>
+        ));
         return (
             <div>
                 <ButtonToolbar>
@@ -64,10 +105,7 @@ export default class SearchForm extends React.Component {
                                 this.setState({ country: e.target.value })
                             }
                         >
-                            <option value="">Select a country</option>
-                            <option value="Singapore">Singapore</option>
-                            <option value="Malaysia">Malaysia</option>
-                            <option value="Indonesia">Indonesia</option>
+                            {locOptions}
                         </Form.Select>
                     </FloatingLabel>
                     <Button
