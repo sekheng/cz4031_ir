@@ -25,21 +25,28 @@ export default class SearchForm extends React.Component {
         // this will send the query to get data from SOLR
         this.setState({ sendMessage: this.state.message });
         this.setState({ sendCountry: this.state.country });
-        let supposedStr = this.client
-            .query()
-            .q({
-                clean_text: this.state.message,
-                location: this.state.country,
-            })
-            .rows(10000);
-        this.client.search(supposedStr, function (err, result) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-            console.log(result.response);
-            // then get the data from it!
-        });
+        let supposedStr = `q=clean_text:"${
+            this.state.message == "" || this.state.message == undefined
+                ? "*"
+                : `"` + this.state.message + `"`
+        }"%0Alocation:${
+            this.state.country == "" ||
+            this.state.country == undefined ||
+            this.state.country == this.listOfLocs[0]
+                ? "*"
+                : `"` + this.state.country + `"`
+        }&q.op=AND&rows=10000`;
+        this.client.search(
+            supposedStr,
+            function (err, result) {
+                console.log(supposedStr);
+                if (err) {
+                    console.log(err);
+                }
+                console.log(result.response);
+                // then get the data from it!
+            }.bind(this)
+        );
     };
     listOfLocs = ["none"];
     constructor(props) {
@@ -48,28 +55,30 @@ export default class SearchForm extends React.Component {
 
     componentDidMount() {
         // get the list of places
-        const columnStr =
-            "q=*:*&q.op=OR&indent=true&facet=true&facet.field=location&facet.limit=-1&facet.mincount=1";
-        this.client.search(
-            columnStr,
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    // extract the list from result
-                    const column =
-                        result["facet_counts"]["facet_fields"]["location"];
-                    if (column !== undefined) {
-                        let colList = column.filter(
-                            (val) => typeof val === "string"
-                        );
-                        // you need this line otherwise compiler complains
-                        this.listOfLocs = colList;
-                        this.setState({ colList: this.listOfLocs });
+        if (this.listOfLocs.length <= 1) {
+            const columnStr =
+                "q=*:*&q.op=OR&facet=true&facet.field=location&facet.limit=-1&facet.mincount=1";
+            this.client.search(
+                columnStr,
+                function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        // extract the list from result
+                        const column =
+                            result["facet_counts"]["facet_fields"]["location"];
+                        if (column !== undefined) {
+                            let colList = column.filter(
+                                (val) => typeof val === "string"
+                            );
+                            // you need this line otherwise compiler complains
+                            this.listOfLocs = this.listOfLocs.concat(colList);
+                            this.setState({ colList: this.listOfLocs });
+                        }
                     }
-                }
-            }.bind(this)
-        );
+                }.bind(this)
+            );
+        }
     }
 
     render() {
