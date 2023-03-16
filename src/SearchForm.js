@@ -20,7 +20,7 @@ export default class SearchForm extends React.Component {
         core: "testTweet",
         protocol: "http",
     });
-
+    result = {};
     handleSubmit = () => {
         // this will send the query to get data from SOLR
         this.setState({ sendMessage: this.state.message });
@@ -39,12 +39,13 @@ export default class SearchForm extends React.Component {
         this.client.search(
             supposedStr,
             function (err, result) {
-                console.log(supposedStr);
                 if (err) {
                     console.log(err);
                 }
-                console.log(result.response);
+                const res = result.response;
                 // then get the data from it!
+                this.result = res;
+                this.setState({ res: this.result });
             }.bind(this)
         );
     };
@@ -126,8 +127,9 @@ export default class SearchForm extends React.Component {
                     </Button>
                 </ButtonToolbar>
                 <Main
-                    message={this.state.sendMessage}
-                    country={this.state.sendCountry}
+                    message={this.state.message}
+                    country={this.state.country}
+                    result={this.result}
                 />
             </div>
         );
