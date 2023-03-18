@@ -14,7 +14,7 @@ export default function Main(props) {
     const message = props.message;
     const country = props.country;
     const result = props.result;
-    console.log(result);
+    // console.log(result);
     let data = [];
     if (Object.keys(result).length > 0) {
         // start extracting the result and get the actual values!

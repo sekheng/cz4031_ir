@@ -5,6 +5,7 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Main from "./Main";
 import SolrNode from "solr-node";
+import DrawMap from "./DrawMap";
 
 export default class SearchForm extends React.Component {
     state = {
@@ -138,6 +139,7 @@ export default class SearchForm extends React.Component {
                     country={this.state.country}
                     result={this.result}
                 />
+                <DrawMap result={this.result} />
             </div>
         );
     }
