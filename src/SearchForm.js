@@ -14,6 +14,14 @@ export default class SearchForm extends React.Component {
         sendCountry: "",
     };
 
+    checkLocation(location) {
+        return (
+            location == "" ||
+            location == undefined ||
+            location == this.listOfLocs[0]
+        );
+    }
+
     client = new SolrNode({
         host: "localhost",
         port: "8983",
@@ -25,17 +33,16 @@ export default class SearchForm extends React.Component {
         // this will send the query to get data from SOLR
         this.setState({ sendMessage: this.state.message });
         this.setState({ sendCountry: this.state.country });
-        let supposedStr = `q=clean_text:"${
+        let supposedStr = `q=clean_text:${
             this.state.message == "" || this.state.message == undefined
                 ? "*"
                 : `"` + this.state.message + `"`
-        }"%0Alocation:${
-            this.state.country == "" ||
-            this.state.country == undefined ||
-            this.state.country == this.listOfLocs[0]
-                ? "*"
-                : `"` + this.state.country + `"`
+        }${
+            this.checkLocation(this.state.country)
+                ? ""
+                : '%0Alocation:"' + this.state.country + '"'
         }&q.op=AND&rows=10000`;
+        console.log(supposedStr);
         this.client.search(
             supposedStr,
             function (err, result) {

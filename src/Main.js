@@ -4,8 +4,6 @@ import PropTypes from "prop-types";
 
 const colors = ["#D51010", "#0e42dd", "#1cc41c", "#ee851b"];
 
-let data = [];
-
 Main.propTypes = {
     message: PropTypes.string.isRequired,
     country: PropTypes.string.isRequired,
@@ -16,18 +14,24 @@ export default function Main(props) {
     const message = props.message;
     const country = props.country;
     const result = props.result;
+    console.log(result);
+    let data = [];
     if (Object.keys(result).length > 0) {
         // start extracting the result and get the actual values!
         for (const item of result["docs"]) {
-            if (data.includes(item.sentiment.string) == false) {
-                // this means that it doesn't exists
-                data[item.sentiment] = {
+            let unableToFindSentiment = true;
+            for (const sent of data) {
+                if (sent.name == item.sentiment) {
+                    sent.sentiment += 1;
+                    unableToFindSentiment = false;
+                    break;
+                }
+            }
+            if (unableToFindSentiment) {
+                data.push({
                     name: item.sentiment,
                     sentiment: 1,
-                };
-            } else {
-                console.log(data[item.sentiment]);
-                data[item.sentiment].sentiment += 1;
+                });
             }
         }
     }
