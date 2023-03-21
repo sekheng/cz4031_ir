@@ -5,7 +5,7 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Main from "./Main";
 import SolrNode from "solr-node";
-import DrawMap from "./DrawMap";
+// import DrawMap from "./DrawMap";
 
 export default class SearchForm extends React.Component {
     state = {
@@ -92,9 +92,9 @@ export default class SearchForm extends React.Component {
 
     render() {
         // to spawn the options
-        let locOptions = this.listOfLocs.map((option, index) => (
-            <option key={index}>{option}</option>
-        ));
+        // let locOptions = this.listOfLocs.map((option, index) => (
+        //     <option key={index}>{option}</option>
+        // ));
         return (
             <div>
                 <ButtonToolbar>
@@ -112,7 +112,7 @@ export default class SearchForm extends React.Component {
                             value={this.state.message}
                         />
                     </FloatingLabel>
-                    <FloatingLabel
+                    {/* <FloatingLabel
                         controlId="floatingInput"
                         label="Country"
                         className="mb-3"
@@ -125,7 +125,7 @@ export default class SearchForm extends React.Component {
                         >
                             {locOptions}
                         </Form.Select>
-                    </FloatingLabel>
+                    </FloatingLabel> */}
                     <Button
                         type="submit"
                         variant="primary"
@@ -134,12 +134,8 @@ export default class SearchForm extends React.Component {
                         Search
                     </Button>
                 </ButtonToolbar>
-                <Main
-                    message={this.state.message}
-                    country={this.state.country}
-                    result={this.result}
-                />
-                <DrawMap result={this.result} />
+                <Main message={this.state.message} result={this.result} />
+                {/* <DrawMap result={this.result} /> */}
             </div>
         );
     }

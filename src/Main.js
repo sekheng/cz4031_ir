@@ -12,7 +12,6 @@ Main.propTypes = {
 
 export default function Main(props) {
     const message = props.message;
-    const country = props.country;
     const result = props.result;
     // console.log(result);
     let data = [];
@@ -39,14 +38,12 @@ export default function Main(props) {
         return (
             <div>
                 <h1>{message}</h1>
-                <h2>{country}</h2>
             </div>
         );
     } else
         return (
             <div>
                 <h1>{message}</h1>
-                <h2>{country}</h2>
                 <Recharts.ResponsiveContainer minWidth={150} minHeight={400}>
                     <Recharts.BarChart
                         data={data}
