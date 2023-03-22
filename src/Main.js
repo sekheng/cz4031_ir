@@ -6,7 +6,6 @@ const colors = ["#D51010", "#0e42dd", "#1cc41c", "#ee851b"];
 
 Main.propTypes = {
     message: PropTypes.string.isRequired,
-    country: PropTypes.string.isRequired,
     result: PropTypes.object.isRequired,
 };
 

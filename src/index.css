@@ -3,15 +3,29 @@ p {
     font-family: Lato;
 }
 
-.input-style {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
+.range-slider {
+    position: relative;
+    width: 100%;
+    height: 10px;
+    background-color: #ddd;
     border-radius: 5px;
-    color: #333333;
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    height: 40px;
-    width: 300px;
-    padding: 10px;
-    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.range-slider input[type="range"] {
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.range-slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: -5px;
 }
