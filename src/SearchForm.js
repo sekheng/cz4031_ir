@@ -1,13 +1,19 @@
 import * as React from "react";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
-import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Main from "./Main";
 import SolrNode from "solr-node";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { parseISO, format } from "date-fns";
+import {
+    Container,
+    Row,
+    Col,
+    Button,
+    Form,
+    FloatingLabel,
+    ButtonToolbar,
+    Stack,
+} from "react-bootstrap";
 
 export default class SearchForm extends React.Component {
     state = {
@@ -94,17 +100,22 @@ export default class SearchForm extends React.Component {
                                 return parseISO(val);
                             }
                         );
+                        let lastDay = new Date(
+                            this.listOfTimeStamp[
+                                this.listOfTimeStamp.length - 1
+                            ]
+                        );
+                        lastDay.setDate(lastDay.getDate() + 1);
+                        this.listOfTimeStamp.push(lastDay);
                         this.setState({
                             startDate: this.listOfTimeStamp[0],
                         });
-                        console.log(this.state.startDate);
                         this.setState({
                             endDate:
                                 this.listOfTimeStamp[
                                     this.listOfTimeStamp.length - 1
                                 ],
                         });
-                        console.log(this.state.endDate);
                     }
                 }
             }.bind(this)
@@ -122,51 +133,69 @@ export default class SearchForm extends React.Component {
     render() {
         // to spawn the options
         return (
-            <div>
-                <ButtonToolbar>
-                    <FloatingLabel
-                        controlId="floatingInput"
-                        label="Ticker"
-                        className="mb-3"
-                    >
-                        <Form.Control
-                            className="me-auto"
-                            placeholder="Type in your favourite ticker such as 'TSLA"
-                            onChange={(e) =>
-                                this.setState({ message: e.target.value })
-                            }
-                            value={this.state.message}
-                        />
-                    </FloatingLabel>
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        onClick={this.handleSubmit}
-                    >
-                        Search
-                    </Button>
-                </ButtonToolbar>
-                <label htmlFor="range-slider">
-                    Select the Start Date and End Date
-                </label>
-                <DatePicker
-                    showIcon
-                    selected={
-                        format(this.state.startDate, "yyyy-MM-dd") ==
-                        this.defaultDate
-                            ? this.listOfTimeStamp[0]
-                            : this.state.startDate
-                    }
-                    startDate={this.state.startDate}
-                    endDate={this.state.endDate}
-                    onChange={(date) => this.setSelectedDate(date)}
-                    includeDates={this.listOfTimeStamp}
-                    selectsRange
-                    inline
-                />
-                <Main message={this.state.message} result={this.result} />
-                {/* <DrawMap result={this.result} /> */}
-            </div>
+            <Container style={{ marginTop: "20px" }}>
+                <Stack gap={2}>
+                    <Row className="justify-content-md-center">
+                        <Col md="auto">
+                            <ButtonToolbar>
+                                <FloatingLabel
+                                    controlId="floatingInput"
+                                    label="Ticker"
+                                    className="mb-3"
+                                >
+                                    <Form.Control
+                                        className="me-auto"
+                                        placeholder="Type in your favourite ticker such as 'TSLA"
+                                        onChange={(e) =>
+                                            this.setState({
+                                                message: e.target.value,
+                                            })
+                                        }
+                                        value={this.state.message}
+                                    />
+                                </FloatingLabel>
+                            </ButtonToolbar>
+                        </Col>
+                        <Col md="auto">
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                onClick={this.handleSubmit}
+                            >
+                                Search
+                            </Button>
+                        </Col>
+                    </Row>
+                    <Row className="justify-content-md-center">
+                        <Col md="auto">
+                            <label
+                                htmlFor="range-slider"
+                                style={{ fontWeight: "bold" }}
+                            >
+                                Select the Start Date and End Date
+                            </label>
+                            <DatePicker
+                                showIcon
+                                selected={
+                                    format(
+                                        this.state.startDate,
+                                        "yyyy-MM-dd"
+                                    ) == this.defaultDate
+                                        ? this.listOfTimeStamp[0]
+                                        : this.state.startDate
+                                }
+                                startDate={this.state.startDate}
+                                endDate={this.state.endDate}
+                                onChange={(date) => this.setSelectedDate(date)}
+                                includeDates={this.listOfTimeStamp}
+                                selectsRange
+                                inline
+                            />
+                        </Col>
+                    </Row>
+                    <Main message={this.state.message} result={this.result} />
+                </Stack>
+            </Container>
         );
     }
 }
