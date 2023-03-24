@@ -12,14 +12,14 @@ Main.propTypes = {
 export default function Main(props) {
     const message = props.message;
     const result = props.result;
-    // console.log(result);
+    console.log(result);
     let data = [];
     if (Object.keys(result).length > 0) {
         // start extracting the result and get the actual values!
         for (const item of result["docs"]) {
             let unableToFindSentiment = true;
             for (const sent of data) {
-                if (sent.name == item.sentiment) {
+                if (sent.name == item.sentiment[0]) {
                     sent.sentiment += 1;
                     unableToFindSentiment = false;
                     break;
@@ -27,7 +27,7 @@ export default function Main(props) {
             }
             if (unableToFindSentiment) {
                 data.push({
-                    name: item.sentiment,
+                    name: item.sentiment[0],
                     sentiment: 1,
                 });
             }

@@ -5,11 +5,9 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 import Main from "./Main";
 import SolrNode from "solr-node";
-// import RangeSlider from "react-range-slider-input";
-// import DrawMap from "./DrawMap";
-import "react-range-slider-input/dist/style.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { parseISO, format } from "date-fns";
 
 export default class SearchForm extends React.Component {
     state = {
@@ -20,6 +18,8 @@ export default class SearchForm extends React.Component {
         startDate: new Date("2014/02/08"),
         endDate: new Date("2014/02/08"),
     };
+
+    defaultDate = format(new Date("2014/02/08"), "yyyy-MM-dd");
 
     checkLocation(location) {
         return (
@@ -32,9 +32,10 @@ export default class SearchForm extends React.Component {
     client = new SolrNode({
         host: "localhost",
         port: "8983",
-        core: "testTweet",
+        core: "mycore",
         protocol: "http",
     });
+
     result = {};
     handleSubmit = () => {
         // this will send the query to get data from SOLR
@@ -44,11 +45,7 @@ export default class SearchForm extends React.Component {
             this.state.message == "" || this.state.message == undefined
                 ? "*"
                 : `"` + this.state.message + `"`
-        }${
-            this.checkLocation(this.state.country)
-                ? ""
-                : '%0Alocation:"' + this.state.country + '"'
-        }&q.op=AND&rows=10000`;
+        }&fq=post_date:[${this.state.startDate.toISOString()} TO ${this.state.endDate.toISOString()}]&q.op=AND&rows=10000`;
         console.log(supposedStr);
         this.client.search(
             supposedStr,
@@ -85,31 +82,45 @@ export default class SearchForm extends React.Component {
                         let colList = column.filter(
                             (val) => typeof val === "string"
                         );
-                        let timeSt = colList.map((val) => {
-                            return new Date(val);
-                        });
+                        let uniqueDate = new Set();
+                        for (const timestam of colList) {
+                            let date = new Date(timestam);
+                            uniqueDate.add(format(date, "yyyy-MM-dd"));
+                        }
                         // i am also assuming that the timestamp is sorted
                         // you need this line otherwise compiler complains
-                        this.listOfTimeStamp = timeSt;
-                        this.setState({ timeSt: this.listOfTimeStamp });
-                        // console.log(this.listOfTimeStamp);
-                        this.setState({ [timeSt[0]]: this.state.startDate });
-                        this.setState({ [timeSt[0]]: this.state.endDate });
+                        this.listOfTimeStamp = Array.from(uniqueDate).map(
+                            (val) => {
+                                return parseISO(val);
+                            }
+                        );
+                        this.setState({
+                            startDate: this.listOfTimeStamp[0],
+                        });
+                        console.log(this.state.startDate);
+                        this.setState({
+                            endDate:
+                                this.listOfTimeStamp[
+                                    this.listOfTimeStamp.length - 1
+                                ],
+                        });
+                        console.log(this.state.endDate);
                     }
                 }
             }.bind(this)
         );
     }
 
-    setSelectedDate(date) {
-        console.log(date);
+    setSelectedDate(dates) {
+        const [start, end] = dates;
+        this.setState({
+            startDate: start,
+            endDate: end,
+        });
     }
 
     render() {
         // to spawn the options
-        // let locOptions = this.listOfLocs.map((option, index) => (
-        //     <option key={index}>{option}</option>
-        // ));
         return (
             <div>
                 <ButtonToolbar>
@@ -127,20 +138,6 @@ export default class SearchForm extends React.Component {
                             value={this.state.message}
                         />
                     </FloatingLabel>
-                    {/* <FloatingLabel
-                        controlId="floatingInput"
-                        label="Country"
-                        className="mb-3"
-                    >
-                        <Form.Select
-                            value={this.state.country}
-                            onChange={(e) =>
-                                this.setState({ country: e.target.value })
-                            }
-                        >
-                            {locOptions}
-                        </Form.Select>
-                    </FloatingLabel> */}
                     <Button
                         type="submit"
                         variant="primary"
@@ -149,29 +146,23 @@ export default class SearchForm extends React.Component {
                         Search
                     </Button>
                 </ButtonToolbar>
-                <label htmlFor="range-slider">DateTime Slider</label>
-                {/* <RangeSlider
-                    name="range-slider"
-                    minValue={
-                        this.listOfTimeStamp.length > 0
-                            ? this.listOfTimeStamp[0].getTime()
-                            : 0
-                    }
-                    maxValue={
-                        this.listOfTimeStamp.length > 0
-                            ? this.listOfTimeStamp[
-                                  this.listOfTimeStamp.length - 1
-                              ].getTime()
-                            : 100
-                    }
-                    step={10}
-                /> */}
+                <label htmlFor="range-slider">
+                    Select the Start Date and End Date
+                </label>
                 <DatePicker
                     showIcon
-                    selected={this.listOfTimeStamp[0]}
+                    selected={
+                        format(this.state.startDate, "yyyy-MM-dd") ==
+                        this.defaultDate
+                            ? this.listOfTimeStamp[0]
+                            : this.state.startDate
+                    }
                     startDate={this.state.startDate}
                     endDate={this.state.endDate}
                     onChange={(date) => this.setSelectedDate(date)}
+                    includeDates={this.listOfTimeStamp}
+                    selectsRange
+                    inline
                 />
                 <Main message={this.state.message} result={this.result} />
                 {/* <DrawMap result={this.result} /> */}
