@@ -13,7 +13,11 @@ import {
     FloatingLabel,
     ButtonToolbar,
     Stack,
+    Dropdown,
+    DropdownButton,
+    InputGroup,
 } from "react-bootstrap";
+import TweetBox from "./TweetBox";
 
 export default class SearchForm extends React.Component {
     state = {
@@ -23,6 +27,8 @@ export default class SearchForm extends React.Component {
         sendCountry: "",
         startDate: new Date("2014/02/08"),
         endDate: new Date("2014/02/08"),
+        listOfRecommended: ["AAPL", "TSLA", "META", "GOOG", "AMZN", "MSFT"],
+        selectedTicker: "Select a ticker",
     };
 
     defaultDate = format(new Date("2014/02/08"), "yyyy-MM-dd");
@@ -38,12 +44,15 @@ export default class SearchForm extends React.Component {
     client = new SolrNode({
         host: "localhost",
         port: "8983",
-        core: "mycore",
+        core: "stock_project_core",
         protocol: "http",
     });
 
     result = {};
     handleSubmit = () => {
+        if (this.state.message.localeCompare(this.state.selectedTicker) !== 0) {
+            this.setState({ selectedTicker: "Select a ticker" });
+        }
         // this will send the query to get data from SOLR
         this.setState({ sendMessage: this.state.message });
         this.setState({ sendCountry: this.state.country });
@@ -66,6 +75,12 @@ export default class SearchForm extends React.Component {
             }.bind(this)
         );
     };
+
+    handleSelectTicker = (ticker) => {
+        this.setState({ selectedTicker: ticker });
+        this.setState({ message: ticker });
+    };
+
     listOfTimeStamp = [];
     constructor(props) {
         super(props);
@@ -130,30 +145,73 @@ export default class SearchForm extends React.Component {
         });
     }
 
+    setStartDate(date) {
+        this.setState({
+            startDate: date,
+        });
+    }
+
+    setEndDate(date) {
+        this.setState({
+            endDate: date,
+        });
+    }
+
     render() {
         // to spawn the options
         return (
             <Container style={{ marginTop: "20px" }}>
-                <Stack gap={2}>
+                <Stack gap={3}>
+                    <Row className="justify-content-md-center">
+                        <Col md="auto">
+                            <h1>Twitter Stock Analysis</h1>
+                        </Col>
+                    </Row>
                     <Row className="justify-content-md-center">
                         <Col md="auto">
                             <ButtonToolbar>
-                                <FloatingLabel
-                                    controlId="floatingInput"
-                                    label="Ticker"
-                                    className="mb-3"
-                                >
-                                    <Form.Control
-                                        className="me-auto"
-                                        placeholder="Type in your favourite ticker such as 'TSLA"
-                                        onChange={(e) =>
-                                            this.setState({
-                                                message: e.target.value,
-                                            })
-                                        }
-                                        value={this.state.message}
-                                    />
-                                </FloatingLabel>
+                                <InputGroup className="mb-3">
+                                    <FloatingLabel
+                                        controlId="floatingInput"
+                                        label="Ticker"
+                                        className="mb-3"
+                                    >
+                                        <Form.Control
+                                            className="me-auto"
+                                            placeholder="Type in your favourite ticker such as 'TSLA"
+                                            onChange={(e) =>
+                                                this.setState({
+                                                    message: e.target.value,
+                                                })
+                                            }
+                                            value={this.state.message}
+                                        />
+                                    </FloatingLabel>
+                                    <DropdownButton
+                                        variant="outline-secondary"
+                                        title={this.state.selectedTicker}
+                                        id="input-group-dropdown-2"
+                                        align="end"
+                                    >
+                                        {this.state.listOfRecommended.map(
+                                            (val, index) => {
+                                                return (
+                                                    <Dropdown.Item
+                                                        key={index}
+                                                        as="button"
+                                                        onClick={() =>
+                                                            this.handleSelectTicker(
+                                                                val
+                                                            )
+                                                        }
+                                                    >
+                                                        {val}
+                                                    </Dropdown.Item>
+                                                );
+                                            }
+                                        )}
+                                    </DropdownButton>
+                                </InputGroup>
                             </ButtonToolbar>
                         </Col>
                         <Col md="auto">
@@ -168,12 +226,42 @@ export default class SearchForm extends React.Component {
                     </Row>
                     <Row className="justify-content-md-center">
                         <Col md="auto">
-                            <label
-                                htmlFor="range-slider"
-                                style={{ fontWeight: "bold" }}
-                            >
+                            <label style={{ fontWeight: "bold" }}>
                                 Select the Start Date and End Date
                             </label>
+                        </Col>
+                    </Row>
+                    <Row className="justify-content-md-center">
+                        <Col md="auto">
+                            <label style={{ fontWeight: "bold" }}>
+                                Start Date
+                            </label>
+                            <DatePicker
+                                selected={this.state.startDate}
+                                onChange={(date) => this.setStartDate(date)}
+                                selectsStart
+                                startDate={this.state.startDate}
+                                endDate={this.state.endDate}
+                                includeDates={this.listOfTimeStamp}
+                            />
+                        </Col>
+                        <Col md="auto">
+                            <label style={{ fontWeight: "bold" }}>
+                                End Date
+                            </label>
+                            <DatePicker
+                                selected={this.state.endDate}
+                                onChange={(date) => this.setEndDate(date)}
+                                selectsEnd
+                                startDate={this.state.startDate}
+                                endDate={this.state.endDate}
+                                minDate={this.state.startDate}
+                                includeDates={this.listOfTimeStamp}
+                            />
+                        </Col>
+                    </Row>
+                    <Row className="justify-content-md-center">
+                        <Col md="auto">
                             <DatePicker
                                 showIcon
                                 selected={
@@ -193,7 +281,8 @@ export default class SearchForm extends React.Component {
                             />
                         </Col>
                     </Row>
-                    <Main message={this.state.message} result={this.result} />
+                    <Main result={this.result} />
+                    <TweetBox result={this.result} />
                 </Stack>
             </Container>
         );

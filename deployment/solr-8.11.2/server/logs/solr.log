@@ -1,3 +1,0 @@
-2023-03-31 12:15:34.116 INFO  (main) [   ] o.e.j.u.log Logging initialized @1161ms to org.eclipse.jetty.util.log.Slf4jLog
-2023-03-31 12:15:34.291 INFO  (main) [   ] o.e.j.s.Server jetty-9.4.44.v20210927; built: 2021-09-27T23:02:44.612Z; git: 8da83308eeca865e495e53ef315a249d63ba9332; jvm 17.0.3.1+2-LTS-6
-2023-03-31 12:15:34.298 INFO  (main) [   ] o.e.j.d.p.ScanningAppProvider Deployment monitor [file:///D:/cz4031_ir/deployment/solr-8.11.2/server/contexts/] at interval 0
