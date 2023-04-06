@@ -29,7 +29,12 @@ export default class SearchForm extends React.Component {
         endDate: new Date("2014/02/08"),
         listOfRecommended: ["AAPL", "TSLA", "META", "GOOG", "AMZN", "MSFT"],
         selectedTicker: "Select a ticker",
+        clickedPieChartName: {},
     };
+
+    handlePieChartClick(name) {
+        this.setState({ clickedPieChartName: name });
+    }
 
     defaultDate = format(new Date("2014/02/08"), "yyyy-MM-dd");
 
@@ -61,7 +66,6 @@ export default class SearchForm extends React.Component {
                 ? "*"
                 : `"` + this.state.message + `"`
         }&fq=post_date:[${this.state.startDate.toISOString()} TO ${this.state.endDate.toISOString()}]&q.op=AND&rows=10000`;
-        console.log(supposedStr);
         this.client.search(
             supposedStr,
             function (err, result) {
@@ -281,8 +285,14 @@ export default class SearchForm extends React.Component {
                             />
                         </Col>
                     </Row>
-                    <Main result={this.result} />
-                    <TweetBox result={this.result} />
+                    <Main
+                        result={this.result}
+                        piecharClick={this.handlePieChartClick.bind(this)}
+                    />
+                    <TweetBox
+                        result={this.result}
+                        clickedPieChartName={this.state.clickedPieChartName}
+                    />
                 </Stack>
             </Container>
         );
