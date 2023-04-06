@@ -6,10 +6,12 @@ const colors = ["#D51010", "#0e42dd", "#1cc41c", "#ee851b"];
 
 Main.propTypes = {
     result: PropTypes.object.isRequired,
+    piecharClick: PropTypes.func.isRequired,
 };
 
 export default function Main(props) {
     const result = props.result;
+    const piecharClick = props.piecharClick;
     let data = [];
     let subjectivityData = [];
     let overallSentiment = -1;
@@ -62,8 +64,6 @@ export default function Main(props) {
                 overallSubjectivityNum = item.subjectivity;
             }
         }
-        console.log(overallSentiment);
-        console.log(overallSubjectivity);
     }
     if (data.length === 0) {
         return <div></div>;
@@ -84,6 +84,11 @@ export default function Main(props) {
                                     <Recharts.Cell
                                         key={`cell-${index}`}
                                         fill={colors[index]}
+                                        onClick={() =>
+                                            piecharClick({
+                                                sentiment: entry.name,
+                                            })
+                                        }
                                     />
                                 ))}
                                 <Recharts.LabelList
@@ -108,6 +113,11 @@ export default function Main(props) {
                                     <Recharts.Cell
                                         key={`cell-${index}`}
                                         fill={colors[index]}
+                                        onClick={() =>
+                                            piecharClick({
+                                                subjectivity: entry.name,
+                                            })
+                                        }
                                     />
                                 ))}
                                 <Recharts.LabelList

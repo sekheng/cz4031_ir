@@ -6,20 +6,41 @@ import { FcLike } from "react-icons/fc";
 
 TweetBox.propTypes = {
     result: PropTypes.object.isRequired,
+    clickedPieChartName: PropTypes.object.isRequired,
 };
 
 export default function TweetBox(props) {
     const result = props.result;
-    console.log(result);
     if (Object.keys(result).length == 0) {
         return <div></div>;
     } else {
+        const pieChartTyped = props.clickedPieChartName;
+        let selectedType = "";
+        let selectedVal = 0;
+        if (Object.keys(pieChartTyped).length > 0) {
+            for (const [key, value] of Object.entries(pieChartTyped)) {
+                if (key == "sentiment") {
+                    selectedType = "sentiment";
+                } else if (key == "subjectivity") {
+                    selectedType = "subjectivity";
+                }
+                selectedVal = value;
+            }
+            console.log(selectedType);
+            console.log(selectedVal);
+            console.log(pieChartTyped);
+        }
         return (
             <Stack gap={3}>
                 <h2>List of Tweets from the selected ticker</h2>
                 {
                     // start extracting the result and get the actual values!
                     result["docs"].map((item, index) => {
+                        if (selectedType != "") {
+                            if (item[selectedType][0] != selectedVal) {
+                                return;
+                            }
+                        }
                         const date = new Date(item.post_date);
                         const formattedDate = date.toLocaleString("en-US", {
                             month: "short",
