@@ -58,6 +58,10 @@ export default class SearchForm extends React.Component {
         if (this.state.message.localeCompare(this.state.selectedTicker) !== 0) {
             this.setState({ selectedTicker: "Select a ticker" });
         }
+        if (this.state.message.trim() === "") {
+            // Input is empty, do not submit
+            return;
+        }
         // this will send the query to get data from SOLR
         this.setState({ sendMessage: this.state.message });
         this.setState({ sendCountry: this.state.country });
