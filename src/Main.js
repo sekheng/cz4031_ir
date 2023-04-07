@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Recharts from "recharts";
 import PropTypes from "prop-types";
 import { Col, Row, Figure } from "react-bootstrap";
-const colors = ["#D51010", "#0e42dd", "#1cc41c", "#ee851b"];
+const colors = ["#D51010", "#0e42dd", "#1cc41c", "#ee851b", "#b75de5"];
 
 Main.propTypes = {
     result: PropTypes.object.isRequired,
