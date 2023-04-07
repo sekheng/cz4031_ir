@@ -24,15 +24,15 @@ Ensure that Docker Desktop is installed locally.
 
 Install all the necessary packages to run the main.py for frontend and backend.
 
-## `cd backend`
+### `cd backend`
 
-## `docker compose -d up`
+### `docker compose -d up`
 
 To start the backend flask server and the SOLR.
 
 # Start the other frontend
 
-## `python frontend/main.py`
+### `python frontend/main.py`
 
 Open [http://localhost:5001](http://localhost:5001) to view it in your browser
 
