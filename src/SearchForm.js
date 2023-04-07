@@ -61,23 +61,40 @@ export default class SearchForm extends React.Component {
         // this will send the query to get data from SOLR
         this.setState({ sendMessage: this.state.message });
         this.setState({ sendCountry: this.state.country });
-        let supposedStr = `q=clean_text:${
-            this.state.message == "" || this.state.message == undefined
-                ? "*"
-                : `"` + this.state.message + `"`
-        }&fq=post_date:[${this.state.startDate.toISOString()} TO ${this.state.endDate.toISOString()}]&q.op=AND&rows=10000`;
-        this.client.search(
-            supposedStr,
-            function (err, result) {
-                if (err) {
-                    console.log(err);
-                }
-                const res = result.response;
-                // then get the data from it!
-                this.result = res;
+        this.setState({ clickedPieChartName: {} });
+        // let supposedStr = `q=clean_text:${
+        //     this.state.message == "" || this.state.message == undefined
+        //         ? "*"
+        //         : `"` + this.state.message + `"`
+        // }&fq=post_date:[${this.state.startDate.toISOString()} TO ${this.state.endDate.toISOString()}]&q.op=AND&rows=10000`;
+        // this.client.search(
+        //     supposedStr,
+        //     function (err, result) {
+        //         if (err) {
+        //             console.log(err);
+        //         }
+        //         const res = result.response;
+        //         // then get the data from it!
+        //         this.result = res;
+        //         this.setState({ res: this.result });
+        //     }.bind(this)
+        // );
+        fetch("http://localhost:5000/querywithdate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                type: "company",
+                content: this.state.message,
+                start_date: this.state.startDate.toISOString().substring(0, 10),
+                end_date: this.state.endDate.toISOString().substring(0, 10),
+                count: 10000,
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                this.result = data;
                 this.setState({ res: this.result });
-            }.bind(this)
-        );
+            });
     };
 
     handleSelectTicker = (ticker) => {

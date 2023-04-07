@@ -1,7 +1,7 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import { Col, Card, Row, Stack, Figure } from "react-bootstrap";
-import { AiOutlineRetweet } from "react-icons/ai";
+// import { AiOutlineRetweet } from "react-icons/ai";
 import { FcLike } from "react-icons/fc";
 
 TweetBox.propTypes = {
@@ -35,13 +35,14 @@ export default function TweetBox(props) {
                 <h2>List of Tweets from the selected ticker</h2>
                 {
                     // start extracting the result and get the actual values!
-                    result["docs"].map((item, index) => {
+                    // result["docs"].map((item, index) => {
+                    result.result.map((item, index) => {
                         if (selectedType != "") {
                             if (item[selectedType][0] != selectedVal) {
                                 return;
                             }
                         }
-                        const date = new Date(item.post_date);
+                        const date = new Date(item.post_date[0]);
                         const formattedDate = date.toLocaleString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -56,7 +57,7 @@ export default function TweetBox(props) {
                             <Card key={index}>
                                 <Row>
                                     <Col md="auto">
-                                        <h4>{item.author}</h4>
+                                        <h4>{item.author[0]}</h4>
                                     </Col>
                                     <Col md="auto">
                                         <p>{formattedDate}</p>
@@ -64,18 +65,18 @@ export default function TweetBox(props) {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <p>{item.raw_text}</p>
+                                        <p>{item.raw_text[0]}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="auto">
                                         <FcLike />
-                                        <p>{item.like_num}</p>
+                                        <p>{item.like_num[0]}</p>
                                     </Col>
-                                    <Col md="auto">
+                                    {/* <Col md="auto">
                                         <AiOutlineRetweet />
                                         <p>{item.retweet_num}</p>
-                                    </Col>
+                                    </Col> */}
                                     <Col md="auto">
                                         <Figure>
                                             <Figure.Image

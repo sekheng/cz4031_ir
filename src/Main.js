@@ -20,7 +20,8 @@ export default function Main(props) {
     let overallSubjectivityNum = 0;
     if (Object.keys(result).length > 0) {
         // start extracting the result and get the actual values!
-        for (const item of result["docs"]) {
+        // for (const item of result["docs"]) {
+        for (const item of result.result) {
             let unableToFindSentiment = true;
             for (const sent of data) {
                 if (sent.name == item.sentiment[0]) {
